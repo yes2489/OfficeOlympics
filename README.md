@@ -22,8 +22,8 @@
       - [4) 색상 팔레트](#4-색상-팔레트)
       - [5) 타이포그래피](#5-타이포그래피)
     - [14. FE/BE README.md](#14-febe-readmemd)
-      - [1) FrontEnd README.md](#1-frontend-readmemd)
-      - [2) BackEnd README.md](#2-backend-readmemd)
+      - [1) FrontEnd README.md](./FrontEnd_README.md)
+      - [2) BackEnd README.md](./BackEnd_README.md)
 
 ### 1. 프로젝트 개요
 
