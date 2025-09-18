@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.olympics.mvc.model.dto.Comments;
 
 import com.olympics.mvc.model.service.CommentsService;
-import com.olympics.mvc.util.Validate;
+import com.olympics.mvc.util.AuthValidator;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -124,10 +124,9 @@ public class CommentsController {
         }
         
         int userId = commentService.findWriter(commentId);
-        if (!Validate.isValidSessionUser(session, userId)) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("본인이 작성한 댓글만 수정할 수 있습니다.");
-        }
-        
+
+        AuthValidator.isSameUserAsSession(session, userId);
+
         comments.setChallengeId(challengeId);
         comments.setUserId(userId);
         comments.setCommentId(commentId);
@@ -165,10 +164,9 @@ public class CommentsController {
             HttpSession session) {
 
 		int userId = commentService.findWriter(commentId);
-		if (!Validate.isValidSessionUser(session, userId)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("본인이 작성한 댓글만 삭제할 수 있습니다.");
-		}
-		
+
+        AuthValidator.isSameUserAsSession(session, userId);
+
 		boolean isDeleted = commentService.deleteCommentOrReply(commentId, userId);
 		
 		if(isDeleted) {
@@ -232,9 +230,8 @@ public class CommentsController {
 		}
 		
 		int userId = commentService.findWriter(replyId);
-		if (!Validate.isValidSessionUser(session, userId)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("본인이 작성한 댓글만 수정할 수 있습니다.");
-		}
+
+        AuthValidator.isSameUserAsSession(session, userId);
 		
 		comments.setChallengeId(challengeId);
 		comments.setUserId(userId);

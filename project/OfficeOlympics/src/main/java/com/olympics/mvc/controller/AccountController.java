@@ -21,7 +21,7 @@ import com.olympics.mvc.model.dto.OlympicsSetup;
 import com.olympics.mvc.model.dto.User;
 import com.olympics.mvc.model.service.PlayerService;
 import com.olympics.mvc.model.service.UserService;
-import com.olympics.mvc.util.Validate;
+import com.olympics.mvc.util.AuthValidator;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,10 +56,8 @@ public class AccountController {
         @ApiResponse(responseCode = "204", description = "사용자 정보 없음")
     })
 	public ResponseEntity<?> mypage(@PathVariable("userId") int userId, HttpSession session) {
-		
-		if (!Validate.isValidSessionUser(session, userId)) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 접근입니다.");
-        }
+
+        AuthValidator.isSameUserAsSession(session, userId);
 		
 	    User user = userService.selectById(userId);
 	    if(user == null) {
@@ -109,11 +107,9 @@ public class AccountController {
     		@RequestParam(value = "olympicsName", required = false) String olympicsName,
     		@RequestParam(value = "playerNames", required = false) List<String> playerNames,
             HttpSession session) {
-		
-        if (!Validate.isValidSessionUser(session, userId)) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("본인의 정보만 수정할 수 있습니다.");
-        }
-        
+
+        AuthValidator.isSameUserAsSession(session, userId);
+
         User user = userService.selectById(userId);
         user.setNickname(nickname);
         user.setUserId(userId);
@@ -157,10 +153,8 @@ public class AccountController {
         @ApiResponse(responseCode = "400", description = "회원 탈퇴 실패")
     })
     public ResponseEntity<String> deleteUser(@PathVariable("userId") int userId, HttpSession session) {
-    	
-    	if (!Validate.isValidSessionUser(session, userId)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자만 탈퇴할 수 있습니다.");
-        }
+
+        AuthValidator.isSameUserAsSession(session, userId);
 
         boolean isDeleted = userService.deleteUser(userId);
         
@@ -171,6 +165,4 @@ public class AccountController {
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원 탈퇴 실패");
     }
-    
-	
 }
