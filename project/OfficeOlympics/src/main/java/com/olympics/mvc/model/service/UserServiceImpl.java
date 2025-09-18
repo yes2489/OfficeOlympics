@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.olympics.mvc.model.dao.UserDao;
 import com.olympics.mvc.model.dto.User;
-import com.olympics.mvc.util.FileConfirm;
+import com.olympics.mvc.util.FileValidator;
 import com.olympics.mvc.util.HashUtil;
 
 @Service
@@ -45,29 +45,27 @@ public class UserServiceImpl implements UserService{
 		if (profileImg != null && profileImg.getSize() > 0) {
 			try {
 
-				if (!FileConfirm.isValidImageFile(profileImg)) {
-				    throw new IllegalArgumentException("jpg 또는 png 파일만 업로드 가능합니다.");
-				}
-				
+                FileValidator.isValidImageFile(profileImg);
+
 				String orgImg = profileImg.getOriginalFilename();
 				String uuid = UUID.randomUUID().toString().replace("-", "");
 				String uuidImgName = uuid+"_"+orgImg;
-				
+
 				File uploadDir = new File(IMG_PATH);
-				
+
 				if(!uploadDir.exists()) {
 					uploadDir.mkdirs();
 				}
-				
+
 				Path filePath = Paths.get(IMG_PATH, uuidImgName);
-				
+
 				try (InputStream inputStream = profileImg.getInputStream()) {
 				    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 				}
-				
+
 				user.setProfileImg(orgImg);
 				user.setImgSrc(PREFIX+uuidImgName);
-				
+
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -134,31 +132,29 @@ public class UserServiceImpl implements UserService{
 		
 		if (profileImg != null && profileImg.getSize() > 0) {
 			try {
-				
-				if (!FileConfirm.isValidImageFile(profileImg)) {
-					throw new IllegalArgumentException("jpg 또는 png 파일만 업로드 가능합니다.");
-				}
-				
+
+                FileValidator.isValidImageFile(profileImg);
+
 				String orgImg = profileImg.getOriginalFilename();
 				String uuid = UUID.randomUUID().toString().replace("-", "");
 				String uuidImgName = uuid+"_"+orgImg;
-				
+
 				File uploadDir = new File(IMG_PATH);
-				
+
 				if(!uploadDir.exists()) {
 					uploadDir.mkdirs();
 				}
-				
+
 				Path filePath = Paths.get(IMG_PATH, uuidImgName);
-				
+
 				try (InputStream inputStream = profileImg.getInputStream()) {
 				    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 				}
-				
+
 				user.setProfileImg(orgImg);
 				user.setImgSrc(PREFIX+uuidImgName);
-				
-				
+
+
 			} catch (Exception e){
 				e.printStackTrace();
 				return false;	
@@ -174,5 +170,5 @@ public class UserServiceImpl implements UserService{
 		
 		return userDao.modifyUser(user) == 1;
 	}
-		
+
 }
